@@ -1,13 +1,23 @@
 # Z-Wave Graph for Home Assistant
 
+This custom panel can display your Z-Wave topology (as available to the system) in Home Assistant (http://www.home-assistant.io) .
 Old location: https://gist.github.com/AdamNaj/cbf4d792a22f443fe9d354e4dca4de00
 
 
 ![Sample screenshot](screenshot.png?raw=true "Sample screenshot")
 
-## Configuration
+### Requirements
+- Home Assistant 0.115+
+- For older versions of Home Assistant consider using [this old version of the component](https://gist.github.com/AdamNaj/cbf4d792a22f443fe9d354e4dca4de00)
 
-Add the following to the HA configuration.yaml file:
+### Installation
+
+- Copy `zwavegraph3.js`  to `<config dir>/www` directory.
+- Configure with config below.
+- Restart Home-Assistant.
+
+### Configuration
+Add the following to the Home Assistant `configuration.yaml` file:
 
 ```yaml
 panel_custom:
@@ -24,6 +34,8 @@ panel_custom:
       # grouping - pick one: z-wave, ungrouped
       grouping: z-wave
 ```
+
+## Changelog
 
 #### Version 1.0:
 - based on the brilliant code by @NigelL - with cosmetic changes mostly about clarity and shaping of nodes based on their function
@@ -49,3 +61,7 @@ panel_custom:
 - restructure to accomodate for a breaking change in Home Assistant 0.115
 - default graph ranker, edge visibility and grouping settings are now customizable in configuration.yaml
 - move from Gist to GitHub - to enable Pull Requests
+
+## TODO:
+- support for theming
+- support for HACS
