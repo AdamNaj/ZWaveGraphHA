@@ -2,6 +2,9 @@
 
 Old location: https://gist.github.com/AdamNaj/cbf4d792a22f443fe9d354e4dca4de00
 
+
+![Sample screenshot](screenshot.png?raw=true "Sample screenshot")
+
 ## Configuration
 
 Add the following to the HA configuration.yaml file:
