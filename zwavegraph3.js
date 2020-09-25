@@ -1,4 +1,4 @@
-/* 
+/*
 
   https://github.com/AdamNaj/ZWaveGraphHA
   Old: https://gist.github.com/AdamNaj/cbf4d792a22f443fe9d354e4dca4de00
@@ -329,27 +329,27 @@ class ZWaveGraphPanel extends LitElement {
 
     var layout = [{
         shape: "rect",
-        color: "#3598DB",
+        color: "var(--primary-color)",
         stroke: "#2470A2",
-        textcolor: "#2470A2",
+        textcolor: "var(--primary-color)",
         text: "Network Simplex",
         ranker: "network-simplex",
         cursor: "pointer"
       },
       {
         shape: "rect",
-        color: "#3598DB",
+        color: "var(--primary-color)",
         stroke: "#2470A2",
-        textcolor: "#2470A2",
+        textcolor: "var(--primary-color)",
         text: "Tight Tree",
         ranker: "tight-tree",
         cursor: "pointer"
       },
       {
         shape: "rect",
-        color: "#3598DB",
+        color: "var(--primary-color)",
         stroke: "#2470A2",
-        textcolor: "#2470A2",
+        textcolor: "var(--primary-color)",
         text: "Longest Path",
         ranker: "longest-path",
         cursor: "pointer"
@@ -358,18 +358,18 @@ class ZWaveGraphPanel extends LitElement {
 
     var edgesLegend = [{
         shape: "rect",
-        color: "#3598DB",
+        color: "var(--primary-color)",
         stroke: "#2470A2",
-        textcolor: "#2470A2",
+        textcolor: "var(--primary-color)",
         text: "Relevant Neighbors",
         edges: "relevant",
         cursor: "pointer"
       },
       {
         shape: "rect",
-        color: "#3598DB",
+        color: "var(--primary-color)",
         stroke: "#2470A2",
-        textcolor: "#2470A2",
+        textcolor: "var(--primary-color)",
         text: "All Neighbors",
         edges: "all",
         cursor: "pointer"
@@ -378,18 +378,18 @@ class ZWaveGraphPanel extends LitElement {
 
     var groupingLegend = [{
         shape: "rect",
-        color: "#3598DB",
+        color: "var(--primary-color)",
         stroke: "#2470A2",
-        textcolor: "#2470A2",
+        textcolor: "var(--primary-color)",
         text: "Z-Wave Locations",
         grouping: "z-wave",
         cursor: "pointer"
       },
       {
         shape: "rect",
-        color: "#3598DB",
+        color: "var(--primary-color)",
         stroke: "#2470A2",
-        textcolor: "#2470A2",
+        textcolor: "var(--primary-color)",
         text: "Ungrouped",
         grouping: "ungrouped",
         cursor: "pointer"
@@ -398,9 +398,9 @@ class ZWaveGraphPanel extends LitElement {
 
     var links = [{
       shape: "rect",
-      color: "#3598DB",
+      color: "var(--primary-color)",
       stroke: "#2470A2",
-      textcolor: "#2470A2",
+      textcolor: "var(--primary-color)",
       text: "Network Management",
       cursor: "hand",
       url: "/config/zwave",
@@ -872,6 +872,7 @@ class ZWaveGraphPanel extends LitElement {
       .text(title)
       .attr('width', 10)
       .attr('height', 10)
+      .style("fill", "var(--accent-color)")
       .style("font-weight", "800");
 
     for (var counter = 0; counter < legends.length; counter++) {
