@@ -529,7 +529,7 @@ class ZWaveGraphPanel extends LitElement {
     svg.selectAll(".node")
       .on("mouseover", this.handleMouseOver)
       .on("mouseout", this.handleMouseOut)
-      .on("click", handleClick);
+      .on("click tap touchstart", handleClick);
 
 
     this.addLegend(this.$, svg, legends, 5, 20, "Node Colors", ranker, this.edgeVisibility, this.grouping);
@@ -891,7 +891,7 @@ class ZWaveGraphPanel extends LitElement {
           .style("font-size", 15)
           .style("text-decoration", "underline")
           .style("cursor", legends[counter].cursor)
-          .on("click", handleClick);
+          .on("click tap touchstart", handleClick);
       } else {
 
         var shape = svg.append(legends[counter].shape)
@@ -935,9 +935,9 @@ class ZWaveGraphPanel extends LitElement {
 
         if (dataLabel !== undefined) {
           shape.attr(dataLabel, dataValue)
-            .on("click", handleClick);
+            .on("click tap touchstart", handleClick);
           text.attr(dataLabel, dataValue)
-            .on("click", handleClick);
+            .on("click tap touchstart", handleClick);
             if (dataValue !== dataState) {
               shape.style("fill", "transparent");
             }
