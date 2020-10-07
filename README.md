@@ -61,6 +61,10 @@ panel_custom:
 - restructure to accomodate for a breaking change in Home Assistant 0.115
 - default graph ranker, edge visibility and grouping settings are now customizable in configuration.yaml
 - move from Gist to GitHub - to enable Pull Requests
+#### Version 3.1: (07 October 2020)
+- Fix for Javscript Error in Log, blank screen - "Uncaught SyntaxError: Unexpected token '<'" (hopefully)
+- Added 'tap' and 'touchstart' event for mobile devices. (Thank you @dennykorsukewitz!)
+- Changed the colors of legends and sub legends. #DarkMode (Thank you @dennykorsukewitz!)
 
 ## TODO:
 - support for theming
