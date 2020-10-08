@@ -65,6 +65,9 @@ panel_custom:
 - Fix for Javscript Error in Log, blank screen - "Uncaught SyntaxError: Unexpected token '<'" (hopefully)
 - Added 'tap' and 'touchstart' event for mobile devices. (Thank you @dennykorsukewitz!)
 - Changed the colors of legends and sub legends. #DarkMode (Thank you @dennykorsukewitz!)
+#### Version 3.2: (08 October 2020)
+- Pinch to zoom added for the benefit of mobile device users
+- Touch has been made somewhat less eager to open the More Info dialog. Doesn't happen on touch start but rather on tap. Otherwise pinch-to-zoom was somewhat of a nightmare.
 
 ## TODO:
 - support for theming

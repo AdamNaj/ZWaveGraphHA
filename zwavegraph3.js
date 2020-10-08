@@ -36,6 +36,12 @@
     - Fix for Javscript Error in Log, blank screen - "Uncaught SyntaxError: Unexpected token '<'" (hopefully)
     - Added 'tap' and 'touchstart' event for mobile devices. (Thank you @dennykorsukewitz!)
     - Changed the colors of legends and sub legends. #DarkMode (Thank you @dennykorsukewitz!)
+
+  Version 3.2: (08 October 2020)
+    - Pinch to zoom added for the benefit of mobile device users
+    - Touch has been made somewhat less eager to open the More Info dialog. Doesn't happen on touch start but rather on tap. Otherwise pinch-to-zoom was somewhat of a nightmare.
+
+
 */
 
 import {
@@ -47,24 +53,33 @@ import {
 import "https://d3js.org/d3.v5.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.js";
 import "https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.5.0/dist/svg-pan-zoom.min.js";
+import "https://hammerjs.github.io/dist/hammer.min.js"
 
 class ZWaveGraphPanel extends LitElement {
   static get properties() {
     return {
-      hass: { type: Object },
-      narrow: { type: Boolean },
-      route: { type: Object },
-      panel: { type: Object },
+      hass: {
+        type: Object
+      },
+      narrow: {
+        type: Boolean
+      },
+      route: {
+        type: Object
+      },
+      panel: {
+        type: Object
+      },
     };
   }
 
-  getHtmlTemplate = function(){
+  getHtmlTemplate = function () {
     var template = this.render();
     return template.getHTML();
   }
 
   render() {
-    return html`
+    return html `
       <div id="content" class="content" style="background: var(--primary-background-color);">
         <svg id="svg" width="100%" height="100%"></svg>
         <svg id="scopeContainer" class="thumb">
@@ -81,7 +96,7 @@ class ZWaveGraphPanel extends LitElement {
   }
 
   static get styles() {
-    return css`
+    return css `
       :host {
         background-color: #0a0a0a;
         padding: 16px;
@@ -267,7 +282,7 @@ class ZWaveGraphPanel extends LitElement {
   firstUpdated() {
     // Give the browser a chance to paint then create the graph
     var that = this;
-    setTimeout(function() {
+    setTimeout(function () {
       that.paintGraph(that.panel.config.ranker, that.panel.config.edge_visibility, that.panel.config.grouping);
     }, 100);
   }
@@ -514,7 +529,7 @@ class ZWaveGraphPanel extends LitElement {
     var that = this;
     var handleClick = function (d, i, nodeList) { // Add interactivity
       var nodeId = nodeList[i].id;
-      var node = nodes.find(function(element) {
+      var node = nodes.find(function (element) {
         return element.id == nodeId;
       });
       that.fire('hass-more-info', {
@@ -526,7 +541,7 @@ class ZWaveGraphPanel extends LitElement {
     svg.selectAll(".node")
       .on("mouseover", this.handleMouseOver)
       .on("mouseout", this.handleMouseOut)
-      .on("click tap touchstart", handleClick);
+      .on("click tap", handleClick);
 
 
     this.addLegend(this.$, svg, legends, 5, 20, "Node Colors", ranker, this.edgeVisibility, this.grouping);
@@ -536,8 +551,6 @@ class ZWaveGraphPanel extends LitElement {
     this.addLegend(this.$, svg, links, 700, 20, "Tools", ranker, this.edgeVisibility, this.grouping);
 
     this.$.miniSvg.innerHTML = this.$.svg.innerHTML;
-
-    var panZoomGraph = svgPanZoom(this.$.svg);
 
     this.bindThumbnail(this.$);
 
@@ -888,7 +901,7 @@ class ZWaveGraphPanel extends LitElement {
           .style("font-size", 15)
           .style("text-decoration", "underline")
           .style("cursor", legends[counter].cursor)
-          .on("click tap touchstart", handleClick);
+          .on("click tap", handleClick);
       } else {
 
         var shape = svg.append(legends[counter].shape)
@@ -932,43 +945,93 @@ class ZWaveGraphPanel extends LitElement {
 
         if (dataLabel !== undefined) {
           shape.attr(dataLabel, dataValue)
-            .on("click tap touchstart", handleClick);
+            .on("click tap", handleClick);
           text.attr(dataLabel, dataValue)
-            .on("click tap touchstart", handleClick);
-            if (dataValue !== dataState) {
-              shape.style("fill", "transparent");
-            }
+            .on("click tap", handleClick);
+          if (dataValue !== dataState) {
+            shape.style("fill", "transparent");
+          }
         }
       }
     }
   }
 
-  bindThumbnail($) {
+  mainEventsHandler = {
+    haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel'],
+    init: function (options) {
+      var instance = options.instance,
+        initialScale = 1,
+        pannedX = 0,
+        pannedY = 0
 
-    var beforePanMain = function (oldPan, newPan) {
-      var stopHorizontal = false,
-        stopVertical = false,
-        gutterWidth = 100,
-        gutterHeight = 100
-        // Computed variables
-        ,
-        sizes = this.getSizes(),
-        leftLimit = -((sizes.viewBox.x + sizes.viewBox.width) * sizes.realZoom) + gutterWidth,
-        rightLimit = sizes.width - gutterWidth - (sizes.viewBox.x * sizes.realZoom),
-        topLimit = -((sizes.viewBox.y + sizes.viewBox.height) * sizes.realZoom) + gutterHeight,
-        bottomLimit = sizes.height - gutterHeight - (sizes.viewBox.y * sizes.realZoom);
-      customPan = {};
-      customPan.x = Math.max(leftLimit, Math.min(rightLimit, newPan.x));
-      customPan.y = Math.max(topLimit, Math.min(bottomLimit, newPan.y));
-      return customPan;
-    };
+      // Init Hammer
+      // Listen only for pointer and touch events
+      this.hammer = Hammer(options.svgElement, {
+        inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
+      })
+
+      // Enable pinch
+      this.hammer.get('pinch').set({
+        enable: true
+      })
+
+      // Handle double tap
+      this.hammer.on('doubletap', function (ev) {
+        instance.zoomIn()
+      })
+
+      // Handle pan
+      this.hammer.on('panstart panmove', function (ev) {
+        // On pan start reset panned variables
+        if (ev.type === 'panstart') {
+          pannedX = 0
+          pannedY = 0
+        }
+
+        // Pan only the difference
+        instance.panBy({
+          x: ev.deltaX - pannedX,
+          y: ev.deltaY - pannedY
+        })
+        pannedX = ev.deltaX
+        pannedY = ev.deltaY
+      })
+
+      // Handle pinch
+      this.hammer.on('pinchstart pinchmove', function (ev) {
+        // On pinch start remember initial zoom
+        if (ev.type === 'pinchstart') {
+          initialScale = instance.getZoom()
+          instance.zoomAtPoint(initialScale * ev.scale, {
+            x: ev.center.x,
+            y: ev.center.y
+          })
+        }
+
+        instance.zoomAtPoint(initialScale * ev.scale, {
+          x: ev.center.x,
+          y: ev.center.y
+        })
+      })
+
+      // Prevent moving the page on some devices when panning over SVG
+      options.svgElement.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+      });
+    },
+    destroy: function () {
+      this.hammer.destroy()
+    }
+  }
+
+  bindThumbnail($) {
 
     var main = svgPanZoom($.svg, {
       zoomEnabled: true,
       controlIconsEnabled: true,
-      fit: true,
-      center: true,
-      beforePan: beforePanMain
+      fit: 1,
+      center: 1,
+      customEventsHandler: this.mainEventsHandler
     });
 
     var thumb = svgPanZoom($.miniSvg, {
@@ -976,7 +1039,7 @@ class ZWaveGraphPanel extends LitElement {
       panEnabled: false,
       controlIconsEnabled: false,
       dblClickZoomEnabled: false,
-      preventMouseEventsDefault: true,
+      preventMouseEventsDefault: true
     });
 
     var resizeTimer;
@@ -1069,6 +1132,7 @@ class ZWaveGraphPanel extends LitElement {
     scopeContainer.addEventListener('mousemove', function (evt) {
       updateMainViewPan(evt);
     });
+
   }
 
   fire(type, detail, options) {
