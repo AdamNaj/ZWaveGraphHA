@@ -1,5 +1,6 @@
 # Archive warning!
-This repository is archived as this graph was included as part of the https://github.com/zwave-js/zwavejs2mqtt.
+This repository is archived as this exact graph was included as part of the [Zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt).
+If you are using the [ZwaveJS](https://github.com/zwave-js/node-zwave-js), please upgrade to full [Zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt) to get this functionality back.
 
 
 # Z-Wave Graph for Home Assistant
