@@ -1,3 +1,7 @@
+# Archive warning!
+This repository is archived as this graph was included as part of the https://github.com/zwave-js/zwavejs2mqtt.
+
+
 # Z-Wave Graph for Home Assistant
 
 This custom panel can display your Z-Wave topology (as available to the system) in Home Assistant (http://www.home-assistant.io) .
